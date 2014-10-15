@@ -11,7 +11,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-int main()
+int main(int argc,char *argv[])
 {
 	int fd;
 	struct sockaddr_in ad;
@@ -19,6 +19,10 @@ int main()
 	struct sockaddr_in ad_snd;
 	int r;
 	socklen_t len;
+	if(argc != 2){
+		printf("Usage:a.out IP\n");
+		exit(-1);
+	}
 	
 	//建立socket
 	fd = socket(AF_INET,SOCK_DGRAM,17);
@@ -28,7 +32,7 @@ int main()
 	ad.sin_family = AF_INET;
 	ad.sin_port = htons(11111);
 	//地址转换和填充
-	inet_aton("192.168.1.126",&ad.sin_addr);
+	inet_aton(argv[1],&ad.sin_addr);
 	r = bind(fd,(struct sockaddr*)&ad,sizeof(ad));
 	if(r == -1)printf("bind err:%m\n"),exit(-1);
 	printf("绑定成功\n");
