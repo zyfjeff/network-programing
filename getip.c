@@ -2,8 +2,8 @@
 	域名解析,获取指定域名对应的别名和地址。
 */
 #include <stdio.h>
-#include <netdb.h>
-
+#include<netdb.h>
+#include<unistd.h> 
 int main()
 {
 	struct hostent *ent = NULL;
