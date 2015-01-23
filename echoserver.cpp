@@ -51,6 +51,11 @@ int childfunc(int fd)
 			cout << "client close" << endl;
 			break;
 		}
+		if(line[0] == 'q')
+		{
+			shutdown(fd,SHUT_RDWR);
+			return 0;
+		}
                 ret = send(fd,line,sizeof(line),0);
 		if(ret == -1)
 			perror("write:");
@@ -110,8 +115,10 @@ int main()
 			pid_t pid;
 			if((pid = fork()) == -1)
 				cout << "fork error" << endl;
-			else if(pid > 0)
+			else if(pid > 0){
+				cout << pid << endl;
 				continue;
+			}
 			else if(pid == 0)
 			{
 				childfunc(fd);

@@ -12,6 +12,7 @@
 #include <strings.h>
 #include <unistd.h>
 #include <errno.h>
+#include <signal.h>
 using namespace std;
 
 #define ERR_EXIT(msg) do{perror(msg);exit(EXIT_FAILURE);}while(0)
@@ -53,12 +54,15 @@ int MakeConnect(const char *ip,int port)
 	return sockfd;
 }
 
+void handlerpipe(int signum)
+{
+	cout << "don't write pipe" << endl;
+}
 
 int main()
 {
+	signal(SIGPIPE,handlerpipe);
 	int sockfd = MakeConnect("192.168.198.132",81);
-	while(1);
-/*
 	while(1)
 	{
 		char line[1024];
@@ -71,13 +75,12 @@ int main()
                 	cout << line << endl;
 		}else if(ret == 0){
 			cout << "server close" << endl;
-			send(sockfd,"dwdwqdwq",8,0);
+			continue;
 			break;
 		}else if(ret < 0){
 			cout << "recv error" << endl;
 			break;
 		}
 	}
-*/
 	close(sockfd);
 }
