@@ -68,19 +68,8 @@ void handlerpipe(int signum)
 int main()
 {
 	signal(SIGPIPE,handlerpipe);
-	int sockfd = MakeConnect("192.168.198.139",8080);
-	struct linger ling;
-	//连接后发送RST报文，测试accpet
-	ling.l_onoff = 1;
-	ling.l_linger = 0;
-	setsockopt(sockfd,SOL_SOCKET,SO_LINGER,&ling,sizeof(ling));
-	close(sockfd);
-	exit(1);
-	while(1)
-	{
-		char line[1024];
-                bzero(line,sizeof(line));
-                fgets(line,sizeof(line),stdin);
+	int sockfd = MakeConnect("192.168.198.134",8080);
+		char line[] = "ds2d2d2d2d21dwq";
                 send(sockfd,line,sizeof(line),0);
                 bzero(line,sizeof(line));
                 int ret = recv(sockfd,line,sizeof(line),0);
@@ -88,12 +77,29 @@ int main()
                 	cout << line << endl;
 		}else if(ret == 0){
 			cout << "server close" << endl;
-			continue;
-			break;
 		}else if(ret < 0){
 			cout << "recv error" << endl;
-			break;
 		}
-	}
+		
+		sleep(20);
+                cout << "write to server" << endl;
+		ret = send(sockfd,line,sizeof(line),0);
+		cout << ret << endl;
+		perror("write....");
+		bzero(line,sizeof(line));
+                sleep(5);
+		ret = recv(sockfd,line,sizeof(line),0);
+		cout << ret <<line << endl;
+		perror("recv....");
+		ret = recv(sockfd,line,sizeof(line),0);
+		perror("recv....");
+		if(ret < 0){
+			if(errno == EBADF)
+				cout << "connect ret" << endl;
+			perror("send");
+		
+		}
+	cout << "end " << endl;
+	while(1);
 	close(sockfd);
 }

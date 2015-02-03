@@ -38,24 +38,32 @@ void print_exit(int status)
 
 int childfunc(int fd)
 {
+	long arg1,arg2;
 	while(1)
 	{
 		char line[1024];
                 bzero(line,sizeof(line));
                 int ret =  recv(fd,line,sizeof(line),0);
 		if(ret > 0){
-               	 	cout << line << endl;
+			if(sscanf(line,"%ld%ld",&arg1,&arg2) == 2){
+               	 		snprintf(line,sizeof(line),"%ld\n",arg1+arg2);
+			}
+			else{
+				snprintf(line,sizeof(line),"input error\n");
+			}
 		}else if(ret < 0){
 			cout << "recv error" << endl;
 		}else if(ret == 0){
 			cout << "client close" << endl;
 			break;
 		}
+		
 		if(line[0] == 'q')
 		{
 			shutdown(fd,SHUT_RDWR);
 			return 0;
 		}
+		
                 ret = send(fd,line,sizeof(line),0);
 		if(ret == -1)
 			perror("write:");
@@ -71,7 +79,7 @@ int MakeServer(int backlog)
 	if(sockfd < 0)
 		ERR_EXIT("create socket");
 	struct sockaddr_in addr;
-	addr.sin_port = htons(81);
+	addr.sin_port = htons(8080);
 	addr.sin_family = AF_INET;
 	if((ret = inet_pton(PF_INET,"0.0.0.0",&(addr.sin_addr))) < 0)
 		ERR_EXIT("convert to ip");
@@ -104,10 +112,12 @@ int main()
 	struct sockaddr_in caddr; //客户端连接过来的源IP
 	socklen_t addrlen = sizeof(struct sockaddr_in);
 	while(1){
+		sleep(50);
 		//int fd = accept(sockfd,(struct sockaddr *)&caddr,&addrlen);
 		int fd = accept(sockfd,NULL,NULL);
-		if(fd == -1)
+		if(fd == -1){
 			ERR_EXIT("accept client");
+		}
 		else
 		    {
 			getpeername(fd,(struct sockaddr *)&caddr,&addrlen);
@@ -116,6 +126,7 @@ int main()
 			if((pid = fork()) == -1)
 				cout << "fork error" << endl;
 			else if(pid > 0){
+				close(fd);
 				cout << pid << endl;
 				continue;
 			}

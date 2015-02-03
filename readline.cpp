@@ -1,5 +1,6 @@
 /*
- *	readline实现，读取一行数据
+ *	readline实现，读取一行数据,效率比较低
+ *	增加效率需要带有buf
  */
 
 #include <unistd.h>
@@ -12,7 +13,7 @@ ssize_t readline(int fd,void *vptr,size_t maxlen)
 {
 	ssize_t n,rc;
 	char c,*ptr;
-	ptr = vptr;
+	ptr = (char *)vptr;
 	for(n = 1;n < maxlen;n++){
 		again:
 			if((rc = read(fd,&c,1)) == 1){
@@ -26,7 +27,7 @@ ssize_t readline(int fd,void *vptr,size_t maxlen)
 				if(errno == EINTR)//信号打断 
 					goto again;
 
-				return(-1);//重新读取
+			return(-1);//错误
 			}
 			
 	}
@@ -37,5 +38,5 @@ ssize_t readline(int fd,void *vptr,size_t maxlen)
 int main()
 {
 	char buf[100];
-	printf("%d\n",readn(0,buf,100));
+	printf("%d\n",readline(0,buf,100));
 }
