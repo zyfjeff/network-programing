@@ -45,12 +45,20 @@ int childfunc(int fd)
                 bzero(line,sizeof(line));
                 int ret =  recv(fd,line,sizeof(line),0);
 		if(ret > 0){
+			close(fd);
+			return fd;
+                	ret = send(fd,line,ret,0);
+			if(ret == -1)
+				perror("write:");
+               		bzero(line,sizeof(line));
+/* 
 			if(sscanf(line,"%ld%ld",&arg1,&arg2) == 2){
                	 		snprintf(line,sizeof(line),"%ld\n",arg1+arg2);
 			}
 			else{
 				snprintf(line,sizeof(line),"input error\n");
 			}
+*/
 		}else if(ret < 0){
 			cout << "recv error" << endl;
 		}else if(ret == 0){
@@ -64,10 +72,6 @@ int childfunc(int fd)
 			return 0;
 		}
 		
-                ret = send(fd,line,sizeof(line),0);
-		if(ret == -1)
-			perror("write:");
-                bzero(line,sizeof(line));
 	}
 	close(fd);
 }
@@ -112,7 +116,6 @@ int main()
 	struct sockaddr_in caddr; //客户端连接过来的源IP
 	socklen_t addrlen = sizeof(struct sockaddr_in);
 	while(1){
-		sleep(50);
 		//int fd = accept(sockfd,(struct sockaddr *)&caddr,&addrlen);
 		int fd = accept(sockfd,NULL,NULL);
 		if(fd == -1){
@@ -135,8 +138,8 @@ int main()
 				childfunc(fd);
 				exit(EXIT_SUCCESS);
 			}
-		//inet_ntop(PF_INET,&caddr,ipbuf,INET_ADDRSTRLEN);
-		//cout << ipbuf << endl;
+		//	inet_ntop(PF_INET,&caddr,ipbuf,INET_ADDRSTRLEN);
+		//	cout << ipbuf << endl;
 		    }
 	}
 	close(sockfd);

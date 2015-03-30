@@ -167,6 +167,7 @@ int run_child(int idx,client_data* user,char* share_mem)
 					send(pipefd,(char*)&idx,sizeof(idx),0); //通知主进程处理数据
 			}else if((sockfd == pipefd) && (events[i].events & EPOLLIN))
 			{
+				//管道有数据可读
 				int client = 0;
 				ret = recv(sockfd,(char *)&client,sizeof(client),0);
 				if(ret < 0)
@@ -177,7 +178,7 @@ int run_child(int idx,client_data* user,char* share_mem)
 					}
 				}else if(ret == 0)
 					stop_child = false;
-				else
+				else//向了客户端发送数据
 					send(connfd,share_mem+client*BUFFER_SIZE,BUFFER_SIZE,0);
 			}else
 				continue;
@@ -228,7 +229,7 @@ int main(int argc,char* argv[])
 	ret = socketpair(PF_UNIX,SOCK_STREAM,0,sig_pipefd);
 	assert(ret != -1);
 	setnonblocking(sig_pipefd[1]);
-	setnonblocking(sig_pipefd[0]);
+	addfd(epollfd,sig_pipefd[0]);
 
 	add_sig(SIGCHLD,sig_handler);
 	add_sig(SIGTERM,sig_handler);

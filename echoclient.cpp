@@ -68,7 +68,8 @@ void handlerpipe(int signum)
 int main()
 {
 	signal(SIGPIPE,handlerpipe);
-	int sockfd = MakeConnect("192.168.198.139",8080);
+	int sockfd = MakeConnect("127.0.0.1",8080);
+/* 
 	struct linger ling;
 	//连接后发送RST报文，测试accpet
 	ling.l_onoff = 1;
@@ -76,6 +77,7 @@ int main()
 	setsockopt(sockfd,SOL_SOCKET,SO_LINGER,&ling,sizeof(ling));
 	close(sockfd);
 	exit(1);
+*/
 	while(1)
 	{
 		char line[1024];
