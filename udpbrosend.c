@@ -32,7 +32,7 @@ int main()
 	int sock = -1;
 	if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1) 
 	{   
-		printf("socket error\n");
+		printf("soctet error\n");
 		return -1;
 	}   
 	
@@ -50,12 +50,13 @@ int main()
 	bzero(&addrto, sizeof(struct sockaddr_in));
 	addrto.sin_family=AF_INET;
 	addrto.sin_addr.s_addr=htonl(INADDR_BROADCAST);
-	addrto.sin_port=htons(6000);
+	addrto.sin_port=htons(60);
 	int nlen=sizeof(addrto);
 
 		//从广播地址发送消息
 		char smsg[] = {"abcdef"};
 		int ret=sendto(sock, smsg, strlen(smsg), 0, (struct sockaddr*)&addrto, nlen);
+		//int ret=sendto(sock, smsg, strlen(smsg), 0,NULL, 0);
 		if(ret<0)
 		{
 			printf("send error %d\n",ret);
