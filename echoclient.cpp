@@ -68,7 +68,8 @@ void handlerpipe(int signum)
 int main()
 {
 	signal(SIGPIPE,handlerpipe);
-	int sockfd = MakeConnect("127.0.0.1",8080);
+	int sockfd = MakeConnect("127.0.0.1",8000);
+	send(sockfd,"zhangyifei",10,0);
 /* 
 	struct linger ling;
 	//连接后发送RST报文，测试accpet
@@ -78,6 +79,7 @@ int main()
 	close(sockfd);
 	exit(1);
 */
+/*
 	while(1)
 	{
 		char line[1024];
@@ -98,4 +100,5 @@ int main()
 		}
 	}
 	close(sockfd);
+*/
 }
